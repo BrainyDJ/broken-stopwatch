@@ -1,0 +1,132 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #ffffff;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stopwatch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+/* The Border.png sits behind the digits as a rectangular frame. */
+.display {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 48px 72px;
+  background-image: url('Assets/Border.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Overlays the left edge of the border — does NOT resize the rectangle. */
+.neg-sign {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 96px;
+  width: auto;
+  z-index: 2;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.digit {
+  height: 96px;
+  width: auto;
+  display: block;
+  image-rendering: pixelated;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.sep {
+  font-size: 80px;
+  line-height: 1;
+  color: #000000;
+  font-weight: 700;
+  padding: 0 4px;
+}
+
+.dec-sep {
+  height: 96px;
+  width: auto;
+  display: block;
+  align-self: flex-end;
+  padding: 0 4px;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.btn-sep {
+  height: 56px;
+  width: auto;
+  display: block;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.btn {
+  height: 72px;
+  width: auto;
+  cursor: pointer;
+  transition: transform 0.08s ease-out;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.btn:hover  { transform: scale(1.005); }
+.btn:active { transform: scale(1.0); }
+
+/* Invisible-on-white real-time readout in the top-left corner.
+   Becomes visible when the user selects/highlights the text. */
+.real-time {
+  position: fixed;
+  top: 12px;
+  left: 16px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 16px;
+  color: #ffffff;
+  background: transparent;
+  z-index: 1;
+}
+
+.vibe-coded {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  height: 80px;
+  width: auto;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+@media (max-width: 700px) {
+  .display { padding: 32px 40px; }
+  .digit   { height: 60px; }
+  .sep     { font-size: 52px; }
+  .btn     { height: 56px; }
+}
