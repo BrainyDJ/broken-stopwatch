@@ -111,6 +111,7 @@ body {
   color: #ffffff;
   background: transparent;
   z-index: 1;
+  white-space: pre-wrap;
 }
 
 .vibe-coded {

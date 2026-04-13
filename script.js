@@ -31,7 +31,10 @@
   }
 
   function renderRealTime() {
-    realTimeEl.textContent = formatRealTime(time_elapsed);
+    let display_string = 'Current Time: ' + formatRealTime(time_elapsed);
+    display_string = display_string + '\n' + 'Current Chance Time Index: ' + String(chance_time_index)
+    display_string = display_string + '\n' + 'Current Multiplier: ' + String(display_increment_multiplier)
+    realTimeEl.textContent = display_string;
   }
 
   const numberSrc = (n) => `Assets/Number - ${n}.png`;
@@ -55,6 +58,7 @@
   let lastTickTime = 0;  // wall-clock ms of the previous tick (while running)
   let intervalId = null;
   let chanceTimeId = null;
+  let chance_time_index = 0;
 
   let CHANCE_TIME_INTERVAL = 10 * 1000;
 
@@ -68,13 +72,13 @@
     const totalTenths = Math.floor(totalMs / 100);
     const tenths = totalTenths % 10;
     const totalSec = Math.floor(totalTenths / 10);
-    // const hours = Math.floor(totalSec / 100); // Intentionally Wrong, should be divided by 3600
-    // const mins  = Math.floor((totalSec % 3600) / 10); // Intentionally Wrong, should be divided by 60
-    // const secs  = totalSec % 60;
+    const hours = Math.floor(totalSec / 3600); 
+    const mins  = Math.floor((totalSec % 3600) / 60);
+    const secs  = totalSec % 60;
 
-    const hours = Math.floor(totalSec / 1000);
-    const mins = Math.floor(totalSec / 10) % 1000;
-    const secs = totalSec % 10;
+    // const hours = Math.floor(totalSec / 1000);
+    // const mins = Math.floor(totalSec / 10) % 1000;
+    // const secs = totalSec % 10;
 
     // Cap hours at 99 so we stay in HH:MM:SS.S format.
     const hh = String(Math.min(hours, 99)).padStart(2, '0');
@@ -104,7 +108,9 @@
   }
 
   function start() {
-    if (inconsistent_button(0.25)) return; // make it hard to click because lol
+    if (chance_function(0.25)) return; // make it hard to click because lol (chance of failure is 25%)
+
+    if (display_increment_multiplier == 0) display_increment_multiplier = 1; // If display is stopped, allow user to restart it by pressing the button
 
     if (intervalId !== null) return; // already running
     lastTickTime = Date.now();
@@ -117,7 +123,7 @@
   }
 
   function stop() {
-    if (inconsistent_button(0.6)) return; // make it hard to click because lol
+    if (chance_function(0.6)) return; // make it hard to click because lol (chance of failure is 25%)
 
     if (intervalId === null) return; // already stopped
     // Flush the trailing sub-tick delta so no time is lost between the last
@@ -140,7 +146,7 @@
   }
 
   function reset() {
-    if (inconsistent_button(0.1)) return; // make it hard to click because lol
+    if (chance_function(0.1)) return; // make it hard to click because lol
 
     // Reset keeps the timer running because lmao
     // if (intervalId !== null) {
@@ -156,10 +162,39 @@
   }
 
   function chance_time() {
-    display_increment_multiplier = -1;
+    // Generate an Integer
+    chance_time_index = Math.floor(Math.random() * 5);
+
+    // Chance every chance time that the function just resets
+    if (chance_function(0.1)) {
+      chance_time_index = 0
+    } 
+
+    // Based on the integer, make something happen
+    switch (chance_time_index) {
+      case 0: // Reset Multiplier
+        display_increment_multiplier = 1;
+        break;
+      case 1: // Reverse Counting
+        display_increment_multiplier = -1;
+        break;
+      case 2: // Pause Counting
+        display_increment_multiplier = 0;
+        break;
+      case 3: // Only increment minutes by making the seconds 60x larger
+        display_increment_multiplier = 60;
+        break;
+      case 4: // Speed Counting
+        display_increment_multiplier = 2;
+        break;
+      default:// Reset Multiplier
+        display_increment_multiplier = 1;
+        break;
+    }
+    
   }
 
-  function inconsistent_button(chance) {
+  function chance_function(chance) {
     // Random number in [0, 1). If the number is lower than "chance," return true. Otherwise false.
     const roll = Math.random();
     
